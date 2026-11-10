@@ -109,9 +109,14 @@ Tailwind CSS v4 (plugin `@tailwindcss/vite`, sin `tailwind.config.js`; tokens de
   `registrarMovimiento` async para cambiarlo por Supabase en la Fase 6 sin tocar la UI).
 - Reglas puras en `src/lib/inventario.ts`: niveles, alertas, lista de compras (rojo y ámbar
   hasta 2 × mínimo, redondeado a unidades que se puedan pedir), valor por mueble.
-- 3D: `src/scene/Insumos.tsx` acomoda los objetos en los `HUECOS` (filas hacia el fondo si no
-  caben); la forma sale de `src/scene/formas.ts`. `IndicadorAlerta` = globito rojo con el número
-  de insumos bajo el mínimo en la esquina del mueble.
+- 3D: `src/scene/Insumos.tsx` acomoda los objetos en los `HUECOS` (elige cuántas filas hacia el
+  fondo dan objetos más grandes sin pasarse del alto del nivel). Cada insumo tiene su modelo
+  propio con colores reales en `src/scene/modelos.tsx` (`MODELOS`, por nombre; si falta, bolsa
+  kraft). **El nivel de stock va en la base de color** debajo del producto (los rojos laten),
+  no en el color del producto; la leyenda está en `src/ui/Leyenda.tsx`. Al agregar un insumo
+  nuevo, agrégale su modelo en `MODELOS`.
+- `IndicadorAlerta` = globito rojo con el número de insumos bajo el mínimo en la esquina del
+  mueble (se oculta mientras ese mueble está abierto).
 - 2D: `src/ui/PanelLateral.tsx` con pestañas Alertas · Compras · Valor · Zonas; la ficha
   `PanelInsumo` reemplaza las pestañas en laptop y sube como hoja inferior en celular.
 - Salida o merma mayor al stock se rechaza con aviso; el conteo real va en "Ajuste".

@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { BarraEscena } from '@/ui/BarraEscena'
+import { Leyenda } from '@/ui/Leyenda'
 import { PanelLateral } from '@/ui/PanelLateral'
 
 // La escena 3D (three.js) se carga aparte para que la página aparezca rápido.
@@ -27,6 +28,7 @@ export default function App() {
             <Escena />
           </Suspense>
           <BarraEscena />
+          <Leyenda />
         </section>
 
         <PanelLateral />

@@ -199,9 +199,10 @@ export function encuadreZona(zona: ZonaId, mueble: MuebleId): Encuadre {
   const base = h.niveles[0]
   const alto = h.techo - base
   return {
-    objetivo: [mx + h.x, base + alto / 2, mz],
+    // Un poco abajo del centro: los productos están en la parte baja del hueco.
+    objetivo: [mx + h.x, base + alto * 0.38, mz],
     direccion: DIRECCION[mueble](h),
-    anchoVisible: Math.max(h.ancho + 0.9, 1.4),
-    altoVisible: Math.max(alto + 0.45, 0.9),
+    anchoVisible: Math.max(h.ancho + 0.55, 1.15),
+    altoVisible: Math.max(alto + 0.3, 0.8),
   }
 }

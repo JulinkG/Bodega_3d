@@ -5,6 +5,7 @@ import { Suspense, useMemo, useRef } from 'react'
 import type { Group } from 'three'
 import { ZONAS } from '@/data/catalogo'
 import { COLOR_NIVEL, nivelDe } from '@/lib/inventario'
+import { useBodega } from '@/store/useBodega'
 import { useInventario } from '@/store/useInventario'
 import type { MuebleId } from '@/types'
 import { DIM } from './constantes'
@@ -19,6 +20,8 @@ export function IndicadorAlerta({ mueble }: { mueble: MuebleId }) {
     () => insumos.filter((i) => ZONAS[i.zona_id].mueble === mueble && nivelDe(i) === 'critico').length,
     [insumos, mueble],
   )
+  // Con el mueble abierto, la cámara está muy cerca: el globito estorbaría.
+  const abierto = useBodega((s) => s.muebleActivo === mueble)
   const grupo = useRef<Group>(null)
   const d = DIM[mueble]
 
@@ -26,7 +29,7 @@ export function IndicadorAlerta({ mueble }: { mueble: MuebleId }) {
     if (grupo.current) grupo.current.position.y = d.alto + 0.14 + Math.sin(clock.elapsedTime * 2.5) * 0.025
   })
 
-  if (criticos === 0) return null
+  if (criticos === 0 || abierto) return null
 
   return (
     <group ref={grupo} position={[d.ancho / 2 - 0.02, d.alto + 0.14, d.fondo / 2]}>
