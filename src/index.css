@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+/* Paleta Relato Café */
+@theme {
+  --color-cafe-900: #3b2418;
+  --color-cafe-700: #4e2f1f;
+  --color-cafe-500: #b5651d;
+  --color-crema-50: #fbf6ef;
+  --color-crema-100: #f5ebe0;
+  --color-crema-200: #ead8c4;
+  --color-ok: #4f9d5d;
+  --color-bajo: #e0a030;
+  --color-critico: #d64541;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-crema-50 text-cafe-900 antialiased;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
