@@ -1,4 +1,5 @@
-import type { MuebleId } from '@/types'
+import { ZONAS } from '@/data/catalogo'
+import type { MuebleId, ZonaId } from '@/types'
 
 // Medidas en metros. La pared de fondo está en z = PARED_Z y los muebles
 // se recargan en ella.
@@ -42,19 +43,51 @@ export const PROFUNDIDAD: Record<MuebleId, number> = {
 
 type Vec3 = [number, number, number]
 
-/** Vista general: a dónde mira la cámara y desde qué dirección. */
-export const VISTA_GENERAL: {
+/** Posición de un mueble: en su lugar de la fila y recargado en la pared. */
+export function lugarMueble(id: MuebleId): Vec3 {
+  return [POSICION_X[id], 0, PARED_Z + PROFUNDIDAD[id] / 2 + 0.03]
+}
+
+/** Encuadre de cámara: a dónde mira, desde qué dirección y qué debe caber. */
+export interface Encuadre {
   objetivo: Vec3
   direccion: Vec3
   anchoVisible: number
   altoVisible: number
-} = {
+}
+
+/** Vista general: toda la cocina. */
+export const VISTA_GENERAL: Encuadre = {
   objetivo: [0.05, 1.1, 0],
   // Desde el frente y un poco arriba.
   direccion: [0, 0.38, 1],
   // Lo que debe caber en pantalla (metros): toda la fila de muebles y las etiquetas.
   anchoVisible: 6.4,
   altoVisible: 2.9,
+}
+
+/**
+ * Encuadre al abrir cada zona. `dx` y `y` son relativos al mueble; el ancho
+ * incluye el espacio de la puerta abierta.
+ */
+const ENFOQUE: Record<ZonaId, { dx: number; y: number; ancho: number; alto: number; direccion: Vec3 }> = {
+  jarabes: { dx: 0.3, y: 1.45, ancho: 2.0, alto: 1.25, direccion: [0.15, 0.15, 1] },
+  verduras: { dx: 0.3, y: 0.5, ancho: 2.0, alto: 1.25, direccion: [0.15, 0.4, 1] },
+  congelados: { dx: 0, y: 0.8, ancho: 1.8, alto: 1.7, direccion: [0, 1.1, 1] },
+  polvos: { dx: -0.4, y: 0.95, ancho: 1.8, alto: 2.2, direccion: [-0.1, 0.2, 1] },
+  leches: { dx: 0.4, y: 0.95, ancho: 1.8, alto: 2.2, direccion: [0.1, 0.2, 1] },
+  desechables: { dx: 0, y: 0.35, ancho: 1.2, alto: 1.1, direccion: [0, 1, 1] },
+}
+
+export function encuadreZona(zona: ZonaId): Encuadre {
+  const e = ENFOQUE[zona]
+  const [x, , z] = lugarMueble(ZONAS[zona].mueble)
+  return {
+    objetivo: [x + e.dx, e.y, z],
+    direccion: e.direccion,
+    anchoVisible: e.ancho,
+    altoVisible: e.alto,
+  }
 }
 
 /**

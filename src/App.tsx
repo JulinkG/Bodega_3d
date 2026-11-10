@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
-import { MUEBLES, ORDEN_MUEBLES, ZONAS } from '@/data/catalogo'
+import { BarraEscena } from '@/ui/BarraEscena'
+import { ListaMuebles } from '@/ui/ListaMuebles'
 
 // La escena 3D (three.js) se carga aparte para que la página aparezca rápido.
 const Escena = lazy(() => import('@/scene/Escena'))
@@ -22,21 +23,13 @@ export default function App() {
           >
             <Escena />
           </Suspense>
+          <BarraEscena />
         </section>
 
         {/* Panel 2D: en la Fase 4 aquí van alertas, compras y valor del inventario */}
         <aside className="overflow-y-auto border-t border-crema-200 bg-white p-4 md:w-80 md:border-t-0 md:border-l">
           <h2 className="mb-3 font-semibold">Muebles y zonas</h2>
-          <ul className="space-y-2">
-            {ORDEN_MUEBLES.map((id) => (
-              <li key={id} className="rounded-lg bg-crema-50 p-3">
-                <p className="font-medium">{MUEBLES[id].nombre}</p>
-                <p className="text-sm text-cafe-500">
-                  {MUEBLES[id].zonas.map((z) => ZONAS[z].nombre).join(' · ')}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <ListaMuebles />
         </aside>
       </main>
     </div>

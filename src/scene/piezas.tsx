@@ -1,8 +1,14 @@
-import { Billboard, Text } from '@react-three/drei'
-import type { ThreeElements } from '@react-three/fiber'
-import { Suspense } from 'react'
+import { Billboard, Text, useCursor } from '@react-three/drei'
+import { useFrame, type ThreeElements, type ThreeEvent } from '@react-three/fiber'
+import { easing } from 'maath'
+import { Suspense, useRef, useState, type ReactNode } from 'react'
+import type { Group } from 'three'
 import nunitoUrl from '@fontsource/nunito/files/nunito-latin-800-normal.woff?url'
+import { MUEBLES } from '@/data/catalogo'
+import { useBodega } from '@/store/useBodega'
+import type { MuebleId } from '@/types'
 import { COLORES } from './constantes'
+import { BRILLO, ResaltadoContext, SUAVIZADO, useResaltado } from './interaccion'
 
 type Vec3 = [number, number, number]
 
@@ -15,11 +21,14 @@ type BloqueProps = Omit<ThreeElements['mesh'], 'args'> & {
 }
 
 export function Bloque({ tam, color, transparente, ...props }: BloqueProps) {
+  const resaltado = useResaltado()
   return (
     <mesh castShadow receiveShadow {...props}>
       <boxGeometry args={tam} />
       <meshStandardMaterial
         color={color}
+        emissive={BRILLO.color}
+        emissiveIntensity={resaltado ? BRILLO.intensidad : 0}
         roughness={0.75}
         transparent={transparente !== undefined}
         opacity={transparente ?? 1}
@@ -125,10 +134,12 @@ interface PuertaProps {
   bisagra: 'izquierda' | 'derecha'
   /** Posición de la bisagra (esquina inferior, cara frontal del mueble). */
   position: Vec3
-  /** 0 = cerrada. En radianes; la Fase 3 lo anima. */
-  angulo?: number
+  abierta?: boolean
+  /** Cuánto gira al abrirse (radianes). */
+  anguloAbierta?: number
   colorJaladera?: string
   jaladera?: 'barra' | 'perilla'
+  onClick?: (e: ThreeEvent<MouseEvent>) => void
 }
 
 /**
@@ -142,16 +153,25 @@ export function Puerta({
   color,
   bisagra,
   position,
-  angulo = 0,
+  abierta = false,
+  anguloAbierta = 1.9,
   colorJaladera = COLORES.metal,
   jaladera = 'barra',
+  onClick,
 }: PuertaProps) {
   const dir = bisagra === 'izquierda' ? 1 : -1
-  const rotY = bisagra === 'izquierda' ? -angulo : angulo
   const xJaladera = dir * (ancho - 0.07)
+  const bisagraRef = useRef<Group>(null)
+
+  // Gira hacia el ángulo objetivo con easing (sin saltos aunque se interrumpa).
+  useFrame((_, delta) => {
+    if (!bisagraRef.current) return
+    const objetivo = abierta ? -dir * anguloAbierta : 0
+    easing.damp(bisagraRef.current.rotation, 'y', objetivo, SUAVIZADO, delta)
+  })
 
   return (
-    <group position={position} rotation={[0, rotY, 0]}>
+    <group ref={bisagraRef} position={position} onClick={onClick}>
       <Bloque tam={[ancho, alto, grosor]} position={[(dir * ancho) / 2, alto / 2, grosor / 2]} color={color} />
       {jaladera === 'barra' ? (
         <mesh castShadow position={[xJaladera, alto / 2, grosor + 0.03]}>
@@ -170,23 +190,53 @@ export function Puerta({
 
 // ─── Etiqueta flotante ──────────────────────────────────────────────────────
 
-export function Etiqueta({ texto, y }: { texto: string; y: number }) {
+/** Nombre del mueble flotando encima. Se oculta mientras hay un mueble abierto. */
+export function Etiqueta({ mueble, y }: { mueble: MuebleId; y: number }) {
+  const visible = useBodega((s) => s.muebleActivo === null)
   // Suspense propio: mientras carga la fuente, el mueble ya se ve.
   return (
     <Suspense fallback={null}>
-      <Billboard position={[0, y, 0]}>
-      <Text
-        font={nunitoUrl}
-        fontSize={0.17}
-        color={COLORES.etiqueta}
-        anchorX="center"
-        anchorY="middle"
-        outlineWidth={0.012}
-        outlineColor="#fbf6ef"
-      >
-        {texto}
-      </Text>
+      <Billboard position={[0, y, 0]} visible={visible}>
+        <Text
+          font={nunitoUrl}
+          fontSize={0.17}
+          color={COLORES.etiqueta}
+          anchorX="center"
+          anchorY="middle"
+          outlineWidth={0.012}
+          outlineColor="#fbf6ef"
+        >
+          {MUEBLES[mueble].nombre}
+        </Text>
       </Billboard>
     </Suspense>
+  )
+}
+
+// ─── Mueble interactivo: hover (cursor + brillo) y clic ─────────────────────
+
+interface MuebleInteractivoProps {
+  position: Vec3
+  onClick: (e: ThreeEvent<MouseEvent>) => void
+  children: ReactNode
+}
+
+/** Envuelve un mueble: con el cursor encima brilla un poco y muestra la manita. */
+export function MuebleInteractivo({ position, onClick, children }: MuebleInteractivoProps) {
+  const [encima, setEncima] = useState(false)
+  useCursor(encima)
+
+  return (
+    <group
+      position={position}
+      onClick={onClick}
+      onPointerOver={(e) => {
+        e.stopPropagation()
+        setEncima(true)
+      }}
+      onPointerOut={() => setEncima(false)}
+    >
+      <ResaltadoContext.Provider value={encima}>{children}</ResaltadoContext.Provider>
+    </group>
   )
 }

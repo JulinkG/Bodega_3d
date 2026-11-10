@@ -1,5 +1,6 @@
-import { MUEBLES } from '@/data/catalogo'
-import { Bloque, CuerpoHueco, Etiqueta, Puerta, Repisas } from '../piezas'
+import { useBodega } from '@/store/useBodega'
+import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo, Puerta, Repisas } from '../piezas'
+import { soloClic } from '../interaccion'
 import { COLORES, nivelesZona } from '../constantes'
 
 type Vec3 = [number, number, number]
@@ -19,11 +20,14 @@ const NIVELES_REFRIGERADOR = {
 
 /** Refrigerador alto de dos zonas, cada una con su puerta y 3 niveles. */
 export function Refrigerador({ position }: { position: Vec3 }) {
+  const zona = useBodega((s) => s.zonaActiva)
+  const alternarZona = useBodega((s) => s.alternarZona)
+  const alternarMueble = useBodega((s) => s.alternarMueble)
   const anchoInterior = ANCHO - 2 * G - 0.01
   const fondoRepisa = FONDO - G - 0.06
 
   return (
-    <group position={position}>
+    <MuebleInteractivo position={position} onClick={soloClic(() => alternarMueble('refrigerador'))}>
       <CuerpoHueco
         ancho={ANCHO}
         alto={ALTO}
@@ -60,6 +64,8 @@ export function Refrigerador({ position }: { position: Vec3 }) {
         alto={ALTO - DIVISION - 0.01}
         color={COLORES.electro}
         position={[ANCHO / 2, DIVISION + 0.005, FONDO / 2]}
+        abierta={zona === 'jarabes'}
+        onClick={soloClic(() => alternarZona('jarabes'))}
       />
       <Puerta
         bisagra="derecha"
@@ -67,9 +73,11 @@ export function Refrigerador({ position }: { position: Vec3 }) {
         alto={DIVISION - 0.015}
         color={COLORES.electro}
         position={[ANCHO / 2, 0.005, FONDO / 2]}
+        abierta={zona === 'verduras'}
+        onClick={soloClic(() => alternarZona('verduras'))}
       />
 
-      <Etiqueta texto={MUEBLES.refrigerador.nombre} y={ALTO + 0.3} />
-    </group>
+      <Etiqueta mueble="refrigerador" y={ALTO + 0.3} />
+    </MuebleInteractivo>
   )
 }

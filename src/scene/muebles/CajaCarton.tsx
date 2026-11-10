@@ -1,5 +1,6 @@
-import { MUEBLES } from '@/data/catalogo'
-import { Bloque, CuerpoHueco, Etiqueta } from '../piezas'
+import { useBodega } from '@/store/useBodega'
+import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo } from '../piezas'
+import { soloClic } from '../interaccion'
 import { COLORES } from '../constantes'
 
 type Vec3 = [number, number, number]
@@ -12,8 +13,9 @@ const SOLAPA = 0.2
 
 /** Caja de cartón abierta con las solapas dobladas hacia afuera. */
 export function CajaCarton({ position }: { position: Vec3 }) {
+  const alternarMueble = useBodega((s) => s.alternarMueble)
   return (
-    <group position={position}>
+    <MuebleInteractivo position={position} onClick={soloClic(() => alternarMueble('caja'))}>
       <CuerpoHueco
         ancho={ANCHO}
         alto={ALTO}
@@ -40,7 +42,7 @@ export function CajaCarton({ position }: { position: Vec3 }) {
         <Bloque tam={[G, SOLAPA, FONDO]} position={[0, SOLAPA / 2, 0]} color={COLORES.cartonOscuro} />
       </group>
 
-      <Etiqueta texto={MUEBLES.caja.nombre} y={ALTO + 0.42} />
-    </group>
+      <Etiqueta mueble="caja" y={ALTO + 0.42} />
+    </MuebleInteractivo>
   )
 }
