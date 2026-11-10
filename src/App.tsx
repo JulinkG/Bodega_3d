@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { BarraEscena } from '@/ui/BarraEscena'
-import { ListaMuebles } from '@/ui/ListaMuebles'
+import { PanelLateral } from '@/ui/PanelLateral'
 
 // La escena 3D (three.js) se carga aparte para que la página aparezca rápido.
 const Escena = lazy(() => import('@/scene/Escena'))
@@ -29,11 +29,7 @@ export default function App() {
           <BarraEscena />
         </section>
 
-        {/* Panel 2D: en la Fase 4 aquí van alertas, compras y valor del inventario */}
-        <aside className="overflow-y-auto border-t border-crema-200 bg-white p-4 md:w-80 md:border-t-0 md:border-l">
-          <h2 className="mb-3 font-semibold">Muebles y zonas</h2>
-          <ListaMuebles />
-        </aside>
+        <PanelLateral />
       </main>
     </div>
   )

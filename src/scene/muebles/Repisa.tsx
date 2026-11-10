@@ -1,6 +1,8 @@
 import { useBodega } from '@/store/useBodega'
 import { COLORES, DIM, NIVELES_REPISA } from '../constantes'
 import { Huecos } from '../Huecos'
+import { IndicadorAlerta } from '../IndicadorAlerta'
+import { Insumos } from '../Insumos'
 import { soloClic } from '../interaccion'
 import { Bloque, Etiqueta, MuebleInteractivo } from '../piezas'
 
@@ -54,8 +56,10 @@ export function Repisa({ position }: { position: Vec3 }) {
         />
       ))}
       <Huecos mueble="repisa" />
+      <Insumos mueble="repisa" />
 
       <Etiqueta mueble="repisa" y={ALTO + 0.3} />
+      <IndicadorAlerta mueble="repisa" />
     </MuebleInteractivo>
   )
 }

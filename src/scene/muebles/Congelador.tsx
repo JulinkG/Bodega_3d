@@ -5,6 +5,9 @@ import type { Group } from 'three'
 import { useBodega } from '@/store/useBodega'
 import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo } from '../piezas'
 import { COLORES, DIM } from '../constantes'
+import { Huecos } from '../Huecos'
+import { IndicadorAlerta } from '../IndicadorAlerta'
+import { Insumos } from '../Insumos'
 import { SUAVIZADO, soloClic } from '../interaccion'
 
 type Vec3 = [number, number, number]
@@ -42,6 +45,9 @@ export function Congelador({ position }: { position: Vec3 }) {
         <Bloque tam={[ANCHO - 0.1, 0.03, 0.006]} position={[0, ALTO - 0.22, FONDO / 2 + 0.003]} color="#7fb6c9" />
       </group>
 
+      <Huecos mueble="congelador" />
+      <Insumos mueble="congelador" />
+
       {/* Tapa: el grupo está en la bisagra (arriba, atrás) */}
       <group ref={tapaRef} position={[0, ALTO, -FONDO / 2]}>
         <Bloque tam={[ANCHO, TAPA, FONDO]} position={[0, TAPA / 2, FONDO / 2]} color={COLORES.electro} />
@@ -49,6 +55,7 @@ export function Congelador({ position }: { position: Vec3 }) {
       </group>
 
       <Etiqueta mueble="congelador" y={ALTO + 0.45} />
+      <IndicadorAlerta mueble="congelador" />
     </MuebleInteractivo>
   )
 }

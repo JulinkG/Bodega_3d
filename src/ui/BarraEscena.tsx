@@ -1,10 +1,10 @@
 import { MUEBLES, ZONAS } from '@/data/catalogo'
 import { useBodega } from '@/store/useBodega'
+import { irAVistaGeneral } from './acciones'
 
 /** Controles encima de la escena: qué está abierto y el botón "Vista general". */
 export function BarraEscena() {
   const zona = useBodega((s) => s.zonaActiva)
-  const vistaGeneral = useBodega((s) => s.vistaGeneral)
 
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
@@ -18,7 +18,7 @@ export function BarraEscena() {
       </p>
       <button
         type="button"
-        onClick={vistaGeneral}
+        onClick={irAVistaGeneral}
         className="pointer-events-auto min-h-11 rounded-full bg-cafe-700 px-4 text-sm font-semibold text-crema-50 shadow-md transition hover:bg-cafe-900 active:scale-95"
       >
         Vista general

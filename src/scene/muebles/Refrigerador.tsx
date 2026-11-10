@@ -1,6 +1,8 @@
 import { useBodega } from '@/store/useBodega'
 import { BASE_REFRI, COLORES, DIM, DIVISOR, NIVELES_REFRI, zonasDePuerta } from '../constantes'
 import { Huecos } from '../Huecos'
+import { IndicadorAlerta } from '../IndicadorAlerta'
+import { Insumos } from '../Insumos'
 import { soloClic } from '../interaccion'
 import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo, Puerta, Repisas } from '../piezas'
 
@@ -70,6 +72,7 @@ export function Refrigerador({ position }: { position: Vec3 }) {
         />
       </group>
       <Huecos mueble="refrigerador" />
+      <Insumos mueble="refrigerador" />
 
       {/* Puertas: jaladeras al centro */}
       <Puerta
@@ -92,6 +95,7 @@ export function Refrigerador({ position }: { position: Vec3 }) {
       />
 
       <Etiqueta mueble="refrigerador" y={ALTO + 0.28} />
+      <IndicadorAlerta mueble="refrigerador" />
     </MuebleInteractivo>
   )
 }

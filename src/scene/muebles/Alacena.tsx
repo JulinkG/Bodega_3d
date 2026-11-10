@@ -1,6 +1,8 @@
 import { useBodega } from '@/store/useBodega'
 import { COLORES, DIM, DIVISOR, NIVELES_ALACENA, zonasDePuerta } from '../constantes'
 import { Huecos } from '../Huecos'
+import { IndicadorAlerta } from '../IndicadorAlerta'
+import { Insumos } from '../Insumos'
 import { soloClic } from '../interaccion'
 import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo, Puerta, Repisas } from '../piezas'
 
@@ -53,6 +55,7 @@ export function Alacena({ position }: { position: Vec3 }) {
         x={xRepisa}
       />
       <Huecos mueble="alacena" />
+      <Insumos mueble="alacena" />
 
       <Puerta
         bisagra="izquierda"
@@ -78,6 +81,7 @@ export function Alacena({ position }: { position: Vec3 }) {
       />
 
       <Etiqueta mueble="alacena" y={ALTO + 0.32} />
+      <IndicadorAlerta mueble="alacena" />
     </MuebleInteractivo>
   )
 }
