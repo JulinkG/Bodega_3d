@@ -80,7 +80,7 @@ Tailwind CSS v4 (plugin `@tailwindcss/vite`, sin `tailwind.config.js`; tokens de
 
 - Medidas en metros; colores, posiciones y vista general en `src/scene/constantes.ts`.
 - Piezas reutilizables en `src/scene/piezas.tsx`: `Bloque`, `CuerpoHueco`, `Repisas`, `Puerta`
-  (gira sobre su bisagra con la prop `angulo`) y `Etiqueta` (fuente Nunito local, sin CDN).
+  (gira sobre su bisagra con la prop `abierta`) y `Etiqueta` (fuente Nunito local, sin CDN).
 - Interacción (Fase 3): el store `src/store/useBodega.ts` guarda `muebleActivo` y `zonaActiva`
   (solo una zona abierta a la vez). Cada puerta corresponde a una zona: refrigerador arriba =
   Jarabes, abajo = Verduras; alacena izquierda = Polvos, derecha = Leches.
