@@ -68,10 +68,20 @@ Tailwind CSS v4 (plugin `@tailwindcss/vite`, sin `tailwind.config.js`; tokens de
 ## Ruta del proyecto
 
 1. ✅ Fase 1 · Esqueleto, CLAUDE.md, esquema SQL listo en `supabase/schema.sql`
-2. Fase 2 · Cocina 3D (4 muebles, etiquetas, OrbitControls con límites)
+2. ✅ Fase 2 · Cocina 3D (4 muebles, etiquetas, OrbitControls con límites)
 3. Fase 3 · Abrir puertas/tapas, enfoque de cámara, botón "Vista general"
 4. Fase 4 · Insumos de prueba (`src/data/mock.ts`), colores, panel de movimientos, alertas, compras
 5. Fase 5–6 · Supabase: login, datos reales, Realtime, administrar insumos
 6. Fase 7 · Historial, conteo del sábado, merma del mes, buscador, PWA, rendimiento
 7. Fase 8 · Publicar en Netlify (repo: https://github.com/JulinkG/Bodega_3d)
 8. Fase 9 · Descuento automático desde Loyverse (recetas + Edge Function)
+
+## Notas de la escena 3D
+
+- Medidas en metros; colores, posiciones y vista general en `src/scene/constantes.ts`.
+- Piezas reutilizables en `src/scene/piezas.tsx`: `Bloque`, `CuerpoHueco`, `Repisas`, `Puerta`
+  (gira sobre su bisagra con la prop `angulo`) y `Etiqueta` (fuente Nunito local, sin CDN).
+- La tapa del congelador gira con `anguloTapa`. La Fase 3 anima estos ángulos.
+- La vista general calcula la distancia de la cámara para que quepa toda la fila en cualquier
+  pantalla (laptop o celular vertical).
+- La escena se carga con `React.lazy` en su propio chunk; la página aparece antes que el 3D.

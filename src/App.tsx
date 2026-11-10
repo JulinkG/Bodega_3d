@@ -1,21 +1,31 @@
+import { lazy, Suspense } from 'react'
 import { MUEBLES, ORDEN_MUEBLES, ZONAS } from '@/data/catalogo'
 
-// Cascarón de la app. La escena 3D (src/scene/) entra en la Fase 2 y el
-// panel de alertas/compras (src/ui/) en la Fase 4.
+// La escena 3D (three.js) se carga aparte para que la página aparezca rápido.
+const Escena = lazy(() => import('@/scene/Escena'))
+
 export default function App() {
   return (
     <div className="flex h-full flex-col">
       <header className="flex items-center justify-between bg-cafe-700 px-4 py-3 text-crema-50">
         <h1 className="text-lg font-bold">Bodega 3D · Relato Café</h1>
-        <span className="text-sm opacity-80">Fase 1</span>
       </header>
 
-      <main className="flex flex-1 flex-col md:flex-row">
-        <section className="flex flex-1 items-center justify-center bg-crema-100 p-6">
-          <p className="text-center text-cafe-700">Aquí va la cocina en 3D (Fase 2).</p>
+      <main className="flex min-h-0 flex-1 flex-col md:flex-row">
+        <section className="relative min-h-[55vh] flex-1 bg-crema-100 md:min-h-0">
+          <Suspense
+            fallback={
+              <div className="absolute inset-0 flex items-center justify-center text-cafe-700">
+                Cargando la cocina…
+              </div>
+            }
+          >
+            <Escena />
+          </Suspense>
         </section>
 
-        <aside className="border-t border-crema-200 bg-white p-4 md:w-80 md:border-t-0 md:border-l">
+        {/* Panel 2D: en la Fase 4 aquí van alertas, compras y valor del inventario */}
+        <aside className="overflow-y-auto border-t border-crema-200 bg-white p-4 md:w-80 md:border-t-0 md:border-l">
           <h2 className="mb-3 font-semibold">Muebles y zonas</h2>
           <ul className="space-y-2">
             {ORDEN_MUEBLES.map((id) => (
