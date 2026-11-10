@@ -14,16 +14,24 @@ registran movimientos (entrada, salida, merma, ajuste).
 ## Muebles y zonas
 
 Catálogo fijo en `src/data/catalogo.ts`; debe coincidir con `supabase/schema.sql`.
+Insumos reales por zona en `src/data/insumosBase.ts` (fuente para datos de prueba y carga inicial).
+Geometría de cada zona (`HUECOS`) en `src/scene/constantes.ts`.
 
-| Mueble         | Zonas               | Ejemplos de insumos                                     |
-|----------------|---------------------|---------------------------------------------------------|
-| Refrigerador   | Jarabes, Verduras   | Vainilla, caramelo, avellana · jitomate, lechuga        |
-| Congelador     | Congelados          | Frutos rojos, pollo, arrachera, hielo                   |
-| Alacena        | Polvos, Leches      | Canela, matcha, cacao, chai · leches en caja sin abrir  |
-| Caja de cartón | Desechables         | Vasos 12 y 16 oz, tapas, popotes, servilletas, bolsas   |
+| Mueble                     | Puerta / lugar | Zonas (de arriba a abajo)                                      |
+|----------------------------|----------------|----------------------------------------------------------------|
+| Refrigerador (2 puertas)   | Izquierda      | Jarabes y salsas dulces · Lácteos · Salsas y aderezos · Jugos y bebidas listas |
+|                            | Derecha        | Frutas frescas · Verduras y hierbas · Proteínas (abajo, por inocuidad) |
+| Congelador (cofre)         | Tapa           | Congelados                                                     |
+| Alacena (2 puertas)        | Izquierda      | Café y polvos para bebidas · Toppings y endulzantes (2 niveles c/u) |
+|                            | Derecha        | Panadería · Abarrotes y condimentos (2 niveles c/u)            |
+| Repisa abierta (sin puertas)| —             | Desechables para bebidas · Desechables para comida · Empaque y etiquetado |
 
-Decisión: el congelador es **una sola zona** (`congelados`); frutos rojos, pollo, arrachera e hielo
-son insumos dentro de ella.
+## Marca
+
+- Pared color granada (`#8e2433`) con el logo y gráficos de Relato Café (`src/scene/Mural.tsx`).
+- Imágenes en `public/marca/` (PNG con fondo transparente): `logo.png` (cara del personaje),
+  `vaso-caliente.png`, `vaso-frio.png`, `huella.png`. El logo también va en el encabezado y favicon.
+- Estilo de los gráficos: trazo de crayón café sobre "sticker" blanco hueso.
 
 ## Reglas de inventario
 
@@ -69,6 +77,7 @@ Tailwind CSS v4 (plugin `@tailwindcss/vite`, sin `tailwind.config.js`; tokens de
 
 1. ✅ Fase 1 · Esqueleto, CLAUDE.md, esquema SQL listo en `supabase/schema.sql`
 2. ✅ Fase 2 · Cocina 3D (4 muebles, etiquetas, OrbitControls con límites)
+   + Ajuste: caja → repisa abierta, refri de 2 puertas, 15 zonas reales, pared granada con mural
 3. ✅ Fase 3 · Abrir puertas/tapas, enfoque de cámara, botón "Vista general"
 4. Fase 4 · Insumos de prueba (`src/data/mock.ts`), colores, panel de movimientos, alertas, compras
 5. Fase 5–6 · Supabase: login, datos reales, Realtime, administrar insumos
@@ -82,8 +91,8 @@ Tailwind CSS v4 (plugin `@tailwindcss/vite`, sin `tailwind.config.js`; tokens de
 - Piezas reutilizables en `src/scene/piezas.tsx`: `Bloque`, `CuerpoHueco`, `Repisas`, `Puerta`
   (gira sobre su bisagra con la prop `abierta`) y `Etiqueta` (fuente Nunito local, sin CDN).
 - Interacción (Fase 3): el store `src/store/useBodega.ts` guarda `muebleActivo` y `zonaActiva`
-  (solo una zona abierta a la vez). Cada puerta corresponde a una zona: refrigerador arriba =
-  Jarabes, abajo = Verduras; alacena izquierda = Polvos, derecha = Leches.
+  (solo una zona abierta a la vez). Una puerta abre todas las zonas detrás de ella
+  (`zonasDePuerta`); `Huecos` permite tocar el nivel exacto y resalta la zona abierta.
 - Puertas y tapa se animan con `easing.damp` de maath (~0.6 s). `soloClic()` ignora arrastres.
 - `ControlCamara` anima cámara y objetivo al encuadre de la zona (`encuadreZona`) o a la vista
   general; si la persona gira o hace zoom, suelta la animación.

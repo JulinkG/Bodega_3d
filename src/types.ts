@@ -1,14 +1,28 @@
 // Tipos del dominio. Reflejan las tablas de supabase/schema.sql.
 
-export type MuebleId = 'refrigerador' | 'congelador' | 'alacena' | 'caja'
+export type MuebleId = 'refrigerador' | 'congelador' | 'alacena' | 'repisa'
 
 export type ZonaId =
+  // Refrigerador (puerta izquierda, de arriba a abajo)
   | 'jarabes'
+  | 'lacteos'
+  | 'salsas'
+  | 'jugos'
+  // Refrigerador (puerta derecha, de arriba a abajo)
+  | 'frutas'
   | 'verduras'
+  | 'proteinas'
+  // Congelador
   | 'congelados'
-  | 'polvos'
-  | 'leches'
-  | 'desechables'
+  // Alacena (puerta izquierda / derecha, arriba y abajo)
+  | 'cafe_polvos'
+  | 'toppings'
+  | 'panaderia'
+  | 'abarrotes'
+  // Repisa abierta
+  | 'desechables_bebidas'
+  | 'desechables_comida'
+  | 'empaque'
 
 export type Unidad = 'pz' | 'kg' | 'g' | 'L' | 'ml' | 'botella' | 'paquete' | 'caja'
 

@@ -4,17 +4,14 @@ import { useRef } from 'react'
 import type { Group } from 'three'
 import { useBodega } from '@/store/useBodega'
 import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo } from '../piezas'
-import { COLORES } from '../constantes'
+import { COLORES, DIM } from '../constantes'
 import { SUAVIZADO, soloClic } from '../interaccion'
 
 type Vec3 = [number, number, number]
 
-const ANCHO = 1.2
-const ALTO = 0.85
-const FONDO = 0.7
-const G = 0.05
+const { ancho: ANCHO, alto: ALTO, fondo: FONDO, grosor: G } = DIM.congelador
 const TAPA = 0.07
-const ANGULO_ABIERTA = 1.3
+const ANGULO_ABIERTA = 1.4
 
 /** Congelador horizontal tipo cofre. La tapa gira hacia arriba desde atrás. */
 export function Congelador({ position }: { position: Vec3 }) {

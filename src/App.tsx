@@ -8,8 +8,11 @@ const Escena = lazy(() => import('@/scene/Escena'))
 export default function App() {
   return (
     <div className="flex h-full flex-col">
-      <header className="flex items-center justify-between bg-cafe-700 px-4 py-3 text-crema-50">
-        <h1 className="text-lg font-bold">Bodega 3D · Relato Café</h1>
+      <header className="flex items-center justify-between bg-granada px-4 py-2 text-crema-50">
+        <h1 className="flex items-center gap-2 text-lg font-bold">
+          <img src="/marca/logo.png" alt="" className="h-8 w-auto" />
+          Bodega 3D · Relato Café
+        </h1>
       </header>
 
       <main className="flex min-h-0 flex-1 flex-col md:flex-row">

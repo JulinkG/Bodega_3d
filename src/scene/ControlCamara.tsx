@@ -3,6 +3,7 @@ import { easing } from 'maath'
 import { useEffect, useRef } from 'react'
 import { MathUtils, Vector3, type PerspectiveCamera } from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
+import { ZONAS } from '@/data/catalogo'
 import { useBodega } from '@/store/useBodega'
 import { encuadreZona, VISTA_GENERAL, type Encuadre } from './constantes'
 import { SUAVIZADO } from './interaccion'
@@ -41,7 +42,7 @@ export function ControlCamara() {
 
   useEffect(() => {
     if (!controls) return
-    const d = calcularDestino(zona ? encuadreZona(zona) : VISTA_GENERAL, camera, aspecto)
+    const d = calcularDestino(zona ? encuadreZona(zona, ZONAS[zona].mueble) : VISTA_GENERAL, camera, aspecto)
     if (primeraVez.current) {
       // Al cargar, se coloca de golpe; las demás veces se anima.
       primeraVez.current = false

@@ -18,6 +18,8 @@ interface EstadoBodega {
   alternarZona: (zona: ZonaId) => void
   /** Clic en el cuerpo del mueble: abre su primera zona o, si ya está abierto, lo cierra. */
   alternarMueble: (mueble: MuebleId) => void
+  /** Clic en una puerta: si alguna de sus zonas está abierta la cierra; si no, abre la primera. */
+  alternarPuerta: (zonas: ZonaId[]) => void
   /** Cierra todo y regresa la cámara a la vista general. */
   vistaGeneral: () => void
 }
@@ -42,6 +44,12 @@ export const useBodega = create<EstadoBodega>()((set, get) => ({
   alternarMueble: (mueble) => {
     if (get().muebleActivo === mueble) get().vistaGeneral()
     else get().abrirZona(MUEBLES[mueble].zonas[0])
+  },
+
+  alternarPuerta: (zonas) => {
+    const actual = get().zonaActiva
+    if (actual && zonas.includes(actual)) get().vistaGeneral()
+    else if (zonas[0]) get().abrirZona(zonas[0])
   },
 
   vistaGeneral: () =>

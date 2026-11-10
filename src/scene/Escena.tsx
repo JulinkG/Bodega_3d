@@ -5,9 +5,9 @@ import { Cocina, Iluminacion } from './Cocina'
 import { COLORES, lugarMueble } from './constantes'
 import { ControlCamara } from './ControlCamara'
 import { Alacena } from './muebles/Alacena'
-import { CajaCarton } from './muebles/CajaCarton'
 import { Congelador } from './muebles/Congelador'
 import { Refrigerador } from './muebles/Refrigerador'
+import { Repisa } from './muebles/Repisa'
 
 export default function Escena() {
   // En pantallas chicas se apagan las sombras para que vaya fluido.
@@ -22,8 +22,7 @@ export default function Escena() {
       className="touch-none"
       aria-label="Cocina de Relato Café en 3D"
     >
-      <color attach="background" args={[COLORES.pared]} />
-      <fog attach="fog" args={[COLORES.pared, 14, 26]} />
+      <color attach="background" args={[COLORES.fondo]} />
 
       <Iluminacion sombras={sombras} />
       <Cocina />
@@ -31,7 +30,7 @@ export default function Escena() {
       <Refrigerador position={lugarMueble('refrigerador')} />
       <Congelador position={lugarMueble('congelador')} />
       <Alacena position={lugarMueble('alacena')} />
-      <CajaCarton position={lugarMueble('caja')} />
+      <Repisa position={lugarMueble('repisa')} />
 
       <OrbitControls
         makeDefault

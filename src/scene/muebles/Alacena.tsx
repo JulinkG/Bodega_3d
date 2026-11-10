@@ -1,26 +1,27 @@
 import { useBodega } from '@/store/useBodega'
-import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo, Puerta, Repisas } from '../piezas'
+import { COLORES, DIM, DIVISOR, NIVELES_ALACENA, zonasDePuerta } from '../constantes'
+import { Huecos } from '../Huecos'
 import { soloClic } from '../interaccion'
-import { COLORES, nivelesZona } from '../constantes'
+import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo, Puerta, Repisas } from '../piezas'
 
 type Vec3 = [number, number, number]
 
-const ANCHO = 1.2
-const ALTO = 1.8
-const FONDO = 0.5
-const G = 0.035
+const { ancho: ANCHO, alto: ALTO, fondo: FONDO, grosor: G } = DIM.alacena
+const ZONAS_IZQ = zonasDePuerta('alacena', 'izquierda')
+const ZONAS_DER = zonasDePuerta('alacena', 'derecha')
 
-/** Superficies de cada lado: izquierda Polvos, derecha Leches */
-const NIVELES_ALACENA = nivelesZona(G, ALTO - G, 4)
-
-/** Alacena de madera con dos puertas: izquierda Polvos, derecha Leches. */
+/**
+ * Alacena de madera con dos puertas y 4 niveles por lado.
+ * Izquierda: café y polvos (arriba), toppings (abajo).
+ * Derecha: panadería (arriba), abarrotes (abajo).
+ */
 export function Alacena({ position }: { position: Vec3 }) {
   const zona = useBodega((s) => s.zonaActiva)
-  const alternarZona = useBodega((s) => s.alternarZona)
+  const alternarPuerta = useBodega((s) => s.alternarPuerta)
   const alternarMueble = useBodega((s) => s.alternarMueble)
   const mitad = ANCHO / 2
-  const anchoRepisa = mitad - G - 0.02
-  const xRepisa = (mitad - G / 2) / 2 + G / 4
+  const anchoRepisa = mitad - G - DIVISOR / 2 - 0.01
+  const xRepisa = DIVISOR / 2 + anchoRepisa / 2 + 0.005
 
   return (
     <MuebleInteractivo position={position} onClick={soloClic(() => alternarMueble('alacena'))}>
@@ -33,7 +34,7 @@ export function Alacena({ position }: { position: Vec3 }) {
         colorInterior={COLORES.maderaInterior}
       />
       {/* Divisor vertical al centro */}
-      <Bloque tam={[0.03, ALTO - 2 * G, FONDO - G]} position={[0, ALTO / 2, G / 2]} color={COLORES.madera} />
+      <Bloque tam={[DIVISOR, ALTO - 2 * G, FONDO - G]} position={[0, ALTO / 2, G / 2]} color={COLORES.madera} />
       {/* Cornisa */}
       <Bloque tam={[ANCHO + 0.06, 0.04, FONDO + 0.04]} position={[0, ALTO + 0.02, 0.01]} color={COLORES.maderaOscura} />
 
@@ -51,6 +52,7 @@ export function Alacena({ position }: { position: Vec3 }) {
         color={COLORES.madera}
         x={xRepisa}
       />
+      <Huecos mueble="alacena" />
 
       <Puerta
         bisagra="izquierda"
@@ -60,8 +62,8 @@ export function Alacena({ position }: { position: Vec3 }) {
         color={COLORES.madera}
         colorJaladera="#3b2418"
         position={[-mitad, 0.01, FONDO / 2]}
-        abierta={zona === 'polvos'}
-        onClick={soloClic(() => alternarZona('polvos'))}
+        abierta={!!zona && ZONAS_IZQ.includes(zona)}
+        onClick={soloClic(() => alternarPuerta(ZONAS_IZQ))}
       />
       <Puerta
         bisagra="derecha"
@@ -71,8 +73,8 @@ export function Alacena({ position }: { position: Vec3 }) {
         color={COLORES.madera}
         colorJaladera="#3b2418"
         position={[mitad, 0.01, FONDO / 2]}
-        abierta={zona === 'leches'}
-        onClick={soloClic(() => alternarZona('leches'))}
+        abierta={!!zona && ZONAS_DER.includes(zona)}
+        onClick={soloClic(() => alternarPuerta(ZONAS_DER))}
       />
 
       <Etiqueta mueble="alacena" y={ALTO + 0.32} />

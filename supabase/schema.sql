@@ -5,8 +5,8 @@
 create table zonas (
   id text primary key,            -- 'jarabes', 'verduras', ...
   nombre text not null,
-  mueble text not null            -- 'refrigerador','congelador','alacena','caja'
-    check (mueble in ('refrigerador','congelador','alacena','caja'))  -- [mejora]
+  mueble text not null            -- 'refrigerador','congelador','alacena','repisa'
+    check (mueble in ('refrigerador','congelador','alacena','repisa'))  -- [mejora]
 );
 
 create table insumos (
@@ -70,9 +70,18 @@ alter publication supabase_realtime add table movimientos;
 alter publication supabase_realtime add table insumos;
 
 insert into zonas values
-  ('jarabes','Jarabes','refrigerador'),
-  ('verduras','Verduras','refrigerador'),
+  ('jarabes','Jarabes y salsas dulces','refrigerador'),
+  ('lacteos','Lácteos','refrigerador'),
+  ('salsas','Salsas y aderezos','refrigerador'),
+  ('jugos','Jugos y bebidas listas','refrigerador'),
+  ('frutas','Frutas frescas','refrigerador'),
+  ('verduras','Verduras y hierbas','refrigerador'),
+  ('proteinas','Proteínas','refrigerador'),
   ('congelados','Congelados','congelador'),
-  ('polvos','Polvos','alacena'),
-  ('leches','Leches','alacena'),
-  ('desechables','Desechables','caja');
+  ('cafe_polvos','Café y polvos para bebidas','alacena'),
+  ('toppings','Toppings y endulzantes','alacena'),
+  ('panaderia','Panadería','alacena'),
+  ('abarrotes','Abarrotes y condimentos','alacena'),
+  ('desechables_bebidas','Desechables para bebidas','repisa'),
+  ('desechables_comida','Desechables para comida','repisa'),
+  ('empaque','Empaque y etiquetado','repisa');

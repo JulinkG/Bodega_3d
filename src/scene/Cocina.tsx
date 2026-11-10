@@ -1,11 +1,14 @@
-import { Bloque } from './piezas'
 import { COLORES, PARED_Z } from './constantes'
+import { Mural } from './Mural'
+import { Bloque } from './piezas'
 
 const ANCHO = 16
 const FONDO = 18
 const TABLON = 0.5
 
-/** Piso de tablones de madera clara, pared crema y zoclo. */
+const ALTO_PARED = 6
+
+/** Piso de tablones de madera clara, paredes granada con el mural de la marca. */
 export function Cocina() {
   const tablones = Math.ceil(ANCHO / TABLON)
 
@@ -29,13 +32,27 @@ export function Cocina() {
         <meshStandardMaterial color={COLORES.zoclo} />
       </mesh>
 
-      {/* Pared de fondo */}
-      <mesh receiveShadow position={[0, 3, PARED_Z]}>
-        <planeGeometry args={[ANCHO, 6]} />
+      {/* Pared de fondo color granada */}
+      <mesh receiveShadow position={[0, ALTO_PARED / 2, PARED_Z]}>
+        <planeGeometry args={[ANCHO, ALTO_PARED]} />
         <meshStandardMaterial color={COLORES.pared} roughness={1} />
       </mesh>
+      {/* Paredes laterales: cierran el cuarto al girar la cámara */}
+      {[-1, 1].map((lado) => (
+        <mesh
+          key={lado}
+          receiveShadow
+          position={[(lado * ANCHO) / 2, ALTO_PARED / 2, PARED_Z + FONDO / 2]}
+          rotation={[0, (-lado * Math.PI) / 2, 0]}
+        >
+          <planeGeometry args={[FONDO, ALTO_PARED]} />
+          <meshStandardMaterial color={COLORES.paredLateral} roughness={1} />
+        </mesh>
+      ))}
       {/* Zoclo */}
       <Bloque tam={[ANCHO, 0.1, 0.02]} position={[0, 0.05, PARED_Z + 0.01]} color={COLORES.zoclo} />
+
+      <Mural />
     </group>
   )
 }
@@ -44,7 +61,7 @@ export function Cocina() {
 export function Iluminacion({ sombras }: { sombras: boolean }) {
   return (
     <>
-      <hemisphereLight args={['#fff4e6', '#e6d2b8', 1.1]} />
+      <hemisphereLight args={['#fff4e6', '#d9c2a8', 1.1]} />
       <directionalLight
         color="#ffe9cc"
         intensity={1.8}

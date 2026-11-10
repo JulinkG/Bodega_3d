@@ -1,83 +1,97 @@
 import { useBodega } from '@/store/useBodega'
-import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo, Puerta, Repisas } from '../piezas'
+import { BASE_REFRI, COLORES, DIM, DIVISOR, NIVELES_REFRI, zonasDePuerta } from '../constantes'
+import { Huecos } from '../Huecos'
 import { soloClic } from '../interaccion'
-import { COLORES, nivelesZona } from '../constantes'
+import { Bloque, CuerpoHueco, Etiqueta, MuebleInteractivo, Puerta, Repisas } from '../piezas'
 
 type Vec3 = [number, number, number]
 
-const ANCHO = 0.8
-const ALTO = 1.9
-const FONDO = 0.7
-const G = 0.04
-/** Altura del entrepaño que separa Jarabes (arriba) de Verduras (abajo). */
-const DIVISION = 1.0
+const { ancho: ANCHO, alto: ALTO, fondo: FONDO, grosor: G } = DIM.refrigerador
+const ZONAS_IZQ = zonasDePuerta('refrigerador', 'izquierda')
+const ZONAS_DER = zonasDePuerta('refrigerador', 'derecha')
 
-/** Superficies donde se acomodan los insumos de cada zona  */
-const NIVELES_REFRIGERADOR = {
-  jarabes: nivelesZona(DIVISION + G / 2, ALTO - G, 3),
-  verduras: nivelesZona(G, DIVISION - G / 2, 3),
-}
-
-/** Refrigerador alto de dos zonas, cada una con su puerta y 3 niveles. */
+/**
+ * Refrigerador comercial de dos puertas. Izquierda (arriba → abajo): jarabes,
+ * lácteos, salsas, jugos. Derecha: frutas, verduras, proteínas.
+ */
 export function Refrigerador({ position }: { position: Vec3 }) {
   const zona = useBodega((s) => s.zonaActiva)
-  const alternarZona = useBodega((s) => s.alternarZona)
+  const alternarPuerta = useBodega((s) => s.alternarPuerta)
   const alternarMueble = useBodega((s) => s.alternarMueble)
-  const anchoInterior = ANCHO - 2 * G - 0.01
+
+  const mitad = ANCHO / 2
+  const altoCuerpo = ALTO - BASE_REFRI
+  const anchoRepisa = mitad - G - DIVISOR / 2 - 0.01
+  const xRepisa = DIVISOR / 2 + anchoRepisa / 2 + 0.005
   const fondoRepisa = FONDO - G - 0.06
 
   return (
     <MuebleInteractivo position={position} onClick={soloClic(() => alternarMueble('refrigerador'))}>
-      <CuerpoHueco
-        ancho={ANCHO}
-        alto={ALTO}
-        fondo={FONDO}
-        grosor={G}
-        color={COLORES.electro}
-        colorInterior={COLORES.electroInterior}
+      {/* Base con rejilla */}
+      <Bloque
+        tam={[ANCHO - 0.02, BASE_REFRI, FONDO - 0.04]}
+        position={[0, BASE_REFRI / 2, 0]}
+        color={COLORES.metalOscuro}
       />
-      {/* Entrepaño divisor */}
-      <Bloque tam={[anchoInterior, G, FONDO - G]} position={[0, DIVISION, G / 2]} color={COLORES.electro} />
-
-      {/* Repisas de vidrio (el piso de cada zona ya es el primer nivel) */}
-      <group position={[0, 0, -0.01]}>
-        <Repisas
-          ancho={anchoInterior}
-          fondo={fondoRepisa}
-          alturas={NIVELES_REFRIGERADOR.jarabes.slice(1)}
-          color={COLORES.vidrio}
-          transparente={0.55}
+      <group position={[0, BASE_REFRI, 0]}>
+        <CuerpoHueco
+          ancho={ANCHO}
+          alto={altoCuerpo}
+          fondo={FONDO}
+          grosor={G}
+          color={COLORES.electro}
+          colorInterior={COLORES.electroInterior}
         />
-        <Repisas
-          ancho={anchoInterior}
-          fondo={fondoRepisa}
-          alturas={NIVELES_REFRIGERADOR.verduras.slice(1)}
-          color={COLORES.vidrio}
-          transparente={0.55}
+        {/* Divisor vertical */}
+        <Bloque
+          tam={[DIVISOR, altoCuerpo - 2 * G, FONDO - G]}
+          position={[0, altoCuerpo / 2, G / 2]}
+          color={COLORES.electroInterior}
         />
       </group>
 
-      {/* Puertas: bisagra a la derecha, jaladera a la izquierda */}
+      {/* Repisas de vidrio (el piso de cada columna ya es el primer nivel) */}
+      <group position={[0, 0, -0.01]}>
+        <Repisas
+          ancho={anchoRepisa}
+          fondo={fondoRepisa}
+          alturas={NIVELES_REFRI.izquierda.slice(1)}
+          color={COLORES.vidrio}
+          transparente={0.55}
+          x={-xRepisa}
+        />
+        <Repisas
+          ancho={anchoRepisa}
+          fondo={fondoRepisa}
+          alturas={NIVELES_REFRI.derecha.slice(1)}
+          color={COLORES.vidrio}
+          transparente={0.55}
+          x={xRepisa}
+        />
+      </group>
+      <Huecos mueble="refrigerador" />
+
+      {/* Puertas: jaladeras al centro */}
       <Puerta
-        bisagra="derecha"
-        ancho={ANCHO}
-        alto={ALTO - DIVISION - 0.01}
+        bisagra="izquierda"
+        ancho={mitad - 0.005}
+        alto={altoCuerpo - 0.01}
         color={COLORES.electro}
-        position={[ANCHO / 2, DIVISION + 0.005, FONDO / 2]}
-        abierta={zona === 'jarabes'}
-        onClick={soloClic(() => alternarZona('jarabes'))}
+        position={[-mitad, BASE_REFRI + 0.005, FONDO / 2]}
+        abierta={!!zona && ZONAS_IZQ.includes(zona)}
+        onClick={soloClic(() => alternarPuerta(ZONAS_IZQ))}
       />
       <Puerta
         bisagra="derecha"
-        ancho={ANCHO}
-        alto={DIVISION - 0.015}
+        ancho={mitad - 0.005}
+        alto={altoCuerpo - 0.01}
         color={COLORES.electro}
-        position={[ANCHO / 2, 0.005, FONDO / 2]}
-        abierta={zona === 'verduras'}
-        onClick={soloClic(() => alternarZona('verduras'))}
+        position={[mitad, BASE_REFRI + 0.005, FONDO / 2]}
+        abierta={!!zona && ZONAS_DER.includes(zona)}
+        onClick={soloClic(() => alternarPuerta(ZONAS_DER))}
       />
 
-      <Etiqueta mueble="refrigerador" y={ALTO + 0.3} />
+      <Etiqueta mueble="refrigerador" y={ALTO + 0.28} />
     </MuebleInteractivo>
   )
 }
