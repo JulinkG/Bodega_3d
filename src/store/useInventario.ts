@@ -53,6 +53,7 @@ export const useInventario = create<EstadoInventario>()((set, get) => ({
       cantidad,
       nota: nota?.trim() || null,
       usuario: null,
+      usuario_email: null,
       creado_en: new Date().toISOString(),
     }
     set((s) => ({

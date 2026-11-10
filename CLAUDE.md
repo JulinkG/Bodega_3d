@@ -80,10 +80,12 @@ Tailwind CSS v4 (plugin `@tailwindcss/vite`, sin `tailwind.config.js`; tokens de
    + Ajuste: caja → repisa abierta, refri de 2 puertas, 15 zonas reales, pared granada con mural
 3. ✅ Fase 3 · Abrir puertas/tapas, enfoque de cámara, botón "Vista general"
 4. ✅ Fase 4 · Insumos de prueba (`src/data/mock.ts`), colores, panel de movimientos, alertas, compras
-5. Fase 5–6 · Supabase: login, datos reales, Realtime, administrar insumos
-6. Fase 7 · Historial, conteo del sábado, merma del mes, buscador, PWA, rendimiento
-7. Fase 8 · Publicar en Netlify (repo: https://github.com/JulinkG/Bodega_3d)
-8. Fase 9 · Descuento automático desde Loyverse (recetas + Edge Function)
+5. Fase 5 · Supabase (pasos manuales en `docs/supabase.md`; `npm run verificar:supabase`;
+   datos de prueba con `npm run seed:sql` → `supabase/seed.sql`)
+6. Fase 6 · Conectar la app: login, datos reales, Realtime, administrar insumos
+7. Fase 7 · Historial, conteo del sábado, merma del mes, buscador, PWA, rendimiento
+8. Fase 8 · Publicar en Netlify (repo: https://github.com/JulinkG/Bodega_3d)
+9. Fase 9 · Descuento automático desde Loyverse (recetas + Edge Function)
 
 ## Notas de la escena 3D
 
@@ -103,7 +105,7 @@ Tailwind CSS v4 (plugin `@tailwindcss/vite`, sin `tailwind.config.js`; tokens de
 
 ## Notas de inventario (Fase 4)
 
-- Datos de prueba: `src/data/mock.ts` arma los 95 insumos de `INSUMOS_BASE` con unidad, mínimo,
+- Datos de prueba: `src/data/mock.ts` arma los 89 insumos de `INSUMOS_BASE` con unidad, mínimo,
   costo, proveedor y stock. Se reinician al recargar (aún no hay base de datos).
 - Estado: `src/store/useInventario.ts` (`insumos`, `movimientos`, `seleccionado`,
   `registrarMovimiento` async para cambiarlo por Supabase en la Fase 6 sin tocar la UI).

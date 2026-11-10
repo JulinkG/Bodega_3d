@@ -61,5 +61,7 @@ export interface Movimiento {
   cantidad: number
   nota: string | null
   usuario: string | null
+  /** Correo de quien lo registró (lo llena Supabase). */
+  usuario_email: string | null
   creado_en: string
 }

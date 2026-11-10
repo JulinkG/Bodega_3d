@@ -1,5 +1,6 @@
 -- Bodega 3D · Relato Café — esquema de base de datos
--- Pegar completo en Supabase > SQL Editor > Run (Fase 5).
+-- Pegar completo en Supabase > SQL Editor > Run (Fase 5). Se corre UNA sola vez
+-- en un proyecto nuevo. Después, si quieres datos de prueba, corre seed.sql.
 -- Cambios respecto a la guía original van marcados con [mejora].
 
 create table zonas (
@@ -11,9 +12,10 @@ create table zonas (
 
 create table insumos (
   id uuid primary key default gen_random_uuid(),
-  nombre text not null,
+  nombre text not null unique,                                      -- [mejora] sin duplicados
   zona_id text not null references zonas(id),                       -- [mejora] not null
-  unidad text not null,
+  unidad text not null
+    check (unidad in ('pz','kg','g','L','ml','botella','paquete','caja')), -- [mejora]
   stock_minimo numeric not null default 0 check (stock_minimo >= 0),     -- [mejora]
   costo_unitario numeric not null default 0 check (costo_unitario >= 0), -- [mejora]
   proveedor text,
@@ -28,6 +30,8 @@ create table movimientos (
   cantidad numeric not null check (cantidad >= 0),  -- [mejora] el signo lo da el tipo
   nota text,
   usuario uuid default auth.uid(),
+  -- [mejora] correo de quien registró, para mostrarlo en el historial
+  usuario_email text default (auth.jwt() ->> 'email'),
   creado_en timestamptz not null default now()
 );
 
@@ -53,17 +57,25 @@ select i.*,
   as stock
 from insumos i where i.activo;
 
--- Seguridad: solo usuarios con sesión iniciada.
+-- Seguridad: solo usuarios con sesión iniciada. Sin sesión no se ve nada.
 alter table zonas enable row level security;
 alter table insumos enable row level security;
 alter table movimientos enable row level security;
 
-create policy "equipo" on zonas for all to authenticated
-  using (true) with check (true);
-create policy "equipo" on insumos for all to authenticated
-  using (true) with check (true);
-create policy "equipo" on movimientos for all to authenticated
-  using (true) with check (true);
+-- [mejora] Permisos más finos que "for all":
+-- Zonas: catálogo fijo, solo lectura.
+create policy "equipo lee zonas" on zonas for select to authenticated using (true);
+
+-- Insumos: leer, dar de alta y editar. No se borran: se desactivan (activo = false)
+-- para no perder su historial.
+create policy "equipo lee insumos" on insumos for select to authenticated using (true);
+create policy "equipo crea insumos" on insumos for insert to authenticated with check (true);
+create policy "equipo edita insumos" on insumos for update to authenticated using (true) with check (true);
+
+-- Movimientos: leer y registrar. No se editan ni se borran (es el kardex);
+-- un error se corrige con otro movimiento, por ejemplo un "ajuste".
+create policy "equipo lee movimientos" on movimientos for select to authenticated using (true);
+create policy "equipo registra movimientos" on movimientos for insert to authenticated with check (true);
 
 -- [mejora] Sin esto, Supabase Realtime NO envía los cambios (Fase 6).
 alter publication supabase_realtime add table movimientos;
